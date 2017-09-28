@@ -53,6 +53,50 @@ public class RedBlackTree {
     }
 
 
+
+    public void rotateTreeRight(Node node){
+        Node parent = node.parent;
+
+        // set rotated node's parent to grandparent
+        node.parent = parent.parent;
+
+        // todo check parent is left or right child
+        node.parent.rChild = node;
+        // or
+        node.parent.lChild = node;
+
+        // set rotated node's left child as parents right child
+        parent.lChild = node.rChild;
+        parent.lChild.parent = parent;
+
+        // set rotated nodes left child as its parent
+        node.rChild = parent;
+        parent.parent = node;
+    }
+
+
+    public void rotateTreeLeft(Node node){
+        Node parent = node.parent;
+
+        // set rotated node's parent to grandparent
+        node.parent = parent.parent;
+
+        // todo check parent is left or right child
+        node.parent.rChild = node;
+        // or
+        node.parent.lChild = node;
+
+        // set rotated node's left child as parents right child
+        parent.rChild = node.lChild;
+        parent.rChild.parent = parent;
+
+        // set rotated nodes left child as its parent
+        node.lChild = parent;
+        parent.parent = node;
+
+    }
+
+
     private boolean insertRecursively(Node tree, int value, Node parent) {
         // end of a branch pull out
 
@@ -84,6 +128,8 @@ public class RedBlackTree {
             }
         }
     }
+
+
 
     /**
      * Insert an integer to the tree
@@ -135,6 +181,7 @@ public class RedBlackTree {
 //    		}
 //    	}
 //    }
+
 
 
     /**
