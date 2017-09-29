@@ -9,12 +9,16 @@
  * ID: 1449872
  *
  */
+
+
 public class RedBlackTree {
+
 
     /**
      * Root node of the red black tree
      */
     private Node root = null;
+
 
     /**
      * Size of the tree
@@ -53,6 +57,10 @@ public class RedBlackTree {
     }
 
 
+    /**
+     * Rotate the node right
+     * @param node     {@code Node} the node to be rotated about
+     */
     private void rotateTreeRight(Node node){
         Node parent = node.parent;
 
@@ -64,7 +72,6 @@ public class RedBlackTree {
             node.parent.rChild = node;
         }
 
-
         // set rotated node's left child as parents right child
         parent.lChild = node.rChild;
         parent.lChild.parent = parent;
@@ -75,6 +82,10 @@ public class RedBlackTree {
     }
 
 
+    /**
+     * Rotate the node left
+     * @param node     {@code Node} the node to be rotated about
+     */
     private void rotateTreeLeft(Node node){
         Node parent = node.parent;
 
@@ -97,6 +108,10 @@ public class RedBlackTree {
     }
 
 
+    /**
+     * Check the node ensuring that all color cases are covered correctly
+     * @param node     {@code Node} the node to be checked for color validity
+     */
     private void fixInsertColor(Node node){
 
         // case 2: check if parent is black return if so
@@ -178,7 +193,6 @@ public class RedBlackTree {
      * @param value      {@code int} New element to be inserted
      */
     public void insert(int value) {
-        // TODO: Lab 2 Part 2-2 -- insert an integer into the tree
         if (checkRecursively(root, value)) {
             return;
         }
@@ -200,6 +214,24 @@ public class RedBlackTree {
     }
 
 
+
+    public String toStringRecursive(Node node, String treeString){
+        // end of a branch pull out
+        if (node == null) {
+            return treeString + String.format("(Node: null, color: null)");
+        }
+
+        // add current nodes data to tree string
+        if (node.value == null){
+            treeString = treeString + String.format("(Node: null, color: %s)", node.color  ? "BLACK" : "RED");
+        } else {
+            treeString = treeString + String.format("(Node: %d, color: %s)", node.value, node.color  ? "BLACK" : "RED");
+        }
+
+        // recursively get the left and right child's strings and return them
+        return toStringRecursive(node.lChild, treeString) + toStringRecursive(node.rChild, "");
+    }
+
     /**
      * Cast the tree into a string
      * @return          {@code String} Printed format of the tree
@@ -207,10 +239,7 @@ public class RedBlackTree {
     @Override public String toString() {
         // TODO: Lab 2 Part 2-3 -- print the tree, where each node contains both value and color
         // You can print it by in-order traversal
-        String treeString = "";
-
-
-        return treeString;
+        return toStringRecursive(root, "");
     }
 
     /**
@@ -219,15 +248,15 @@ public class RedBlackTree {
      */
     public static void main(String[] args) {
         RedBlackTree rbt = new RedBlackTree();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 5; i++)
             rbt.insert((int) (Math.random() * 200));
 
         assert rbt.root.color == RedBlackTree.Node.BLACK;
         System.out.println(rbt.root);           // This helps to figure out the tree structure
         System.out.println(rbt);
-
         //tests
         System.out.println(rbt.root.lChild.value);
+        System.out.println(rbt.toString());
     }
 
 
