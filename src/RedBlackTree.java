@@ -214,11 +214,10 @@ public class RedBlackTree {
     }
 
 
-
     public String toStringRecursive(Node node, String treeString){
-        // end of a branch pull out
+        // end of a branch pull out and dont record
         if (node == null) {
-            return treeString + String.format("(Node: null, color: null)");
+            return treeString;
         }
 
         // add current nodes data to tree string
@@ -229,7 +228,12 @@ public class RedBlackTree {
         }
 
         // recursively get the left and right child's strings and return them
-        return toStringRecursive(node.lChild, treeString) + toStringRecursive(node.rChild, "");
+        return String.format(
+            "{%s [LEFT: %s] [RIGHT: %s]}",
+            treeString,
+            toStringRecursive(node.lChild, ""),
+            toStringRecursive(node.rChild, "")
+        );
     }
 
     /**
@@ -254,9 +258,7 @@ public class RedBlackTree {
         assert rbt.root.color == RedBlackTree.Node.BLACK;
         System.out.println(rbt.root);           // This helps to figure out the tree structure
         System.out.println(rbt);
-        //tests
-        System.out.println(rbt.root.lChild.value);
-        System.out.println(rbt.toString());
+
     }
 
 
