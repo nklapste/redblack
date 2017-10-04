@@ -14,16 +14,16 @@ public class ResearchGroups {
 
         // iterate through each subgroup
         for (int groupnum = 0; groupnum < groups.length; groupnum++) {
-            String [] group = groups[groupnum];
+            String[] group = groups[groupnum];
 
             // iterate through each name within a subgroup
-            for (int personnum = 0; personnum<group.length; personnum++) {
+            for (int personnum = 0; personnum < group.length; personnum++) {
                 String person = groups[groupnum][personnum];
 
-                if(person.equals(name)) {
+                if (person.equals(name)) {
                     found = true;
                     System.out.printf("%s exists ", name);
-                    if (personnum==0) {
+                    if (personnum == 0) {
                         System.out.print("as leader, ");
                     } else {
                         System.out.print("as follower, ");
@@ -43,9 +43,10 @@ public class ResearchGroups {
 
     /**
      * Swap two values within an array
-     * @param groups   {@code String[][]} 
-     * @param a   {@code int} index of the first element to be swapped
-     * @param b	  {@code int} index of the second element to be swapped
+     *
+     * @param groups {@code String[][]}
+     * @param a      {@code int} index of the first element to be swapped
+     * @param b      {@code int} index of the second element to be swapped
      */
     public static void swap(String[][] groups, int a, int b) {
         String[] tmp = groups[a];
@@ -56,28 +57,30 @@ public class ResearchGroups {
 
     /**
      * Building a heap to sort using implicit binary tree method
-     * @param groups   {@code String[][]} The array of string arrays to be sorted
-     * @param l   {@code int} The length limit (for loop iteration 
-     * 					      limit) of the array to be sorted
+     *
+     * @param groups {@code String[][]} The array of string arrays to be sorted
+     * @param l      {@code int} The length limit (for loop iteration
+     *               limit) of the array to be sorted
      */
     public static void buildheap(String[][] groups, int l) {
         for (int i = 0; i <= l; i++) {
             int i_ = i;
 
-            while (groups[i_].length > groups[(i_-1)/2].length  && i_ != 0) {
-                swap(groups, i_, ((i_-1)/2));
-                i_ = (i_-1)/2;
+            while (groups[i_].length > groups[(i_ - 1) / 2].length && i_ != 0) {
+                swap(groups, i_, ((i_ - 1) / 2));
+                i_ = (i_ - 1) / 2;
             }
         }
     }
 
     /**
      * The heap sort procedure on a array of string arrays
-     * @param groups   {@code String[][]} The array of string arrays to be sorted
+     *
+     * @param groups {@code String[][]} The array of string arrays to be sorted
      */
     public static void sortGroups(String[][] groups) {
         // minus by one to deal with 0 indexing
-        int length = groups.length-1;
+        int length = groups.length - 1;
 
         while (length > 0) {
             // step 1 build the heap
@@ -88,7 +91,7 @@ public class ResearchGroups {
 
             // iterate length down by 1 to lock
             // down solved components
-            length = length-1;
+            length = length - 1;
 
             // step 3 heapify the rest
             buildheap(groups, length);
@@ -97,7 +100,7 @@ public class ResearchGroups {
 
 
     public static void main(String[] args) {
-        String[][] groups = { {"Bob", "Carol", "Eric", "Matt"},             // 0
+        String[][] groups = {{"Bob", "Carol", "Eric", "Matt"},             // 0
                 {"Jim", "Lucy", "Terry", "Brenda", "Ben"},    // 1
                 {"Susan", "Brad", "Jim"},                     // 2
                 {"Sue", "Wendy", "Sam"},                      // 3
@@ -105,7 +108,7 @@ public class ResearchGroups {
                 {"Mohammad", "Tim", "Kian"},                  // 5
                 {"Emma", "Carol"},                            // 6
                 {"Nick", "Osama", "Harry", "Ben"},            // 7
-                {"Mary", "John", "Ricky"} };                  // 8
+                {"Mary", "John", "Ricky"}};                  // 8
 
         // test searchMember 
         searchMember(groups, "Bob");
@@ -116,7 +119,7 @@ public class ResearchGroups {
         // test sortGroups
         sortGroups(groups);
 
-        for (int i=0;i<groups.length;i++) {
+        for (int i = 0; i < groups.length; i++) {
             System.out.print("group " + i + ": ");
             for (int j = 0; j < groups[i].length; j++)
                 System.out.print(groups[i][j] + " ");
