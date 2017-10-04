@@ -12,7 +12,8 @@
 
 public class RedBlackTree {
 
-
+    private static boolean ROTATE_LEFT = true;
+    private static boolean ROTATE_RIGHT = false;
     /**
      * Root node of the red black tree
      */
@@ -24,7 +25,33 @@ public class RedBlackTree {
      */
     private int size = 0;
 
+    /**
+     * Main entry
+     *
+     * @param args {@code String[]} Command line arguments
+     */
+    public static void main(String[] args) {
+        RedBlackTree rbt = new RedBlackTree();
+        for (int i = 0; i < 10; i++){
+            int var = (int) (Math.random() * 200);
+            // print for debugging
+            System.out.println(var);
+            rbt.insert(var);
+        }
+           // rbt.insert((int) (Math.random() * 200));
 
+        assert rbt.root.color == RedBlackTree.Node.BLACK;
+        System.out.println(rbt);
+        System.out.println(rbt.size());
+
+    }
+
+    /**
+     * Recursively search the tree to find if the value is contained
+     *
+     * @param value {@code int} the value to be checked
+     * @return {@code boolean} If contains, return {@code true}, otherwise return {@code false}
+     */
     private boolean checkRecursively(Node tree, int value) {
         // end of a branch pull out
         if (tree == null || tree.value == null) {
@@ -45,7 +72,6 @@ public class RedBlackTree {
         }
     }
 
-
     /**
      * Search the tree to find if the value is contained
      *
@@ -56,7 +82,6 @@ public class RedBlackTree {
         return checkRecursively(root, value);
     }
 
-
     /**
      * Rotate the node right
      *
@@ -64,51 +89,126 @@ public class RedBlackTree {
      */
     private void rotateTreeRight(Node node) {
         Node parent = node.parent;
+        Node grandParent = parent.parent;
 
-        // set rotated node's parent to grandparent
-        node.parent = parent.parent;
-        if (node.isLeftChild()) {
-            node.parent.lChild = node;
-        } else {
-            node.parent.rChild = node;
+        if (grandParent == null){
+            root = node;
         }
 
-        // set rotated node's left child as parents right child
-        parent.lChild = node.rChild;
-        parent.lChild.parent = parent;
-
-        // set rotated nodes left child as its parent
-        node.rChild = parent;
+        if (parent.isLeftChild()){
+            grandParent.lChild = node;
+        } else {
+            grandParent.rChild = node;
+        }
+        node.parent = grandParent;
         parent.parent = node;
-    }
+        parent.lChild = node.rChild;
+        if (node.rChild != null){
+            node.rChild.parent = parent;
+        }
+        node.rChild = parent;
 
+//        node.rChild = parent.lChild;
+//        parent = node.rChild.parent;
+//        grandParent = node.parent;
+//        if (parent.isLeftChild()){
+//            node = grandParent.lChild;
+//        } else {
+//            node = grandParent.rChild;
+//        }
+//        parent = node.rChild;
+//        node = parent.parent;
+
+//        if(node.parent == root){
+//            node = root;
+//        }
+//
+//        // set rotated node's parent to grandparent
+//        node.parent = parent.parent;
+//        if (node.isLeftChild()) {
+//            node.parent.lChild = node;
+//        } else {
+//            node.parent.rChild = node;
+//        }
+//
+//        // set rotated node's left child as parents right child
+//        parent.lChild = node.rChild;
+//        parent.lChild.parent = parent;
+//
+//        // set rotated nodes left child as its parent
+//        node.rChild = parent;
+//        parent.parent = node;
+    }
 
     /**
      * Rotate the node left
      *
      * @param node {@code Node} the node to be rotated about
      */
-    private void rotateTreeLeft(Node node) {
+    private void rotateTree(Node node, boolean direction) {
         Node parent = node.parent;
+        Node grandParent = parent.parent;
 
-        // set rotated node's parent to grandparent
-        node.parent = parent.parent;
-        if (node.isLeftChild()) {
-            node.parent.lChild = node;
-        } else {
-            node.parent.rChild = node;
+        if (grandParent == null){
+            root = node;
         }
 
-        // set rotated node's left child as parents right child
-        parent.rChild = node.lChild;
-        parent.rChild.parent = parent;
-
-        // set rotated nodes left child as its parent
-        node.lChild = parent;
+        if (parent.isLeftChild()){
+            grandParent.lChild = node;
+        } else {
+            grandParent.rChild = node;
+        }
+        node.parent = grandParent;
         parent.parent = node;
 
-    }
+        if (direction== ROTATE_LEFT){
+            parent.rChild = node.lChild;
+            if (node.lChild != null){
+                node.lChild.parent = parent;
+            }
+            node.lChild = parent;
+        } else {
+            parent.lChild = node.rChild;
+            if (node.rChild != null){
+                node.rChild.parent = parent;
+            }
+            node.rChild = parent;
+        }
 
+
+//        node.lChild = parent.rChild;
+//        parent = node.lChild.parent;
+//        grandParent = node.parent;
+//        if (parent.isLeftChild()){
+//            node = grandParent.lChild;
+//        } else {
+//            node = grandParent.rChild;
+//        }
+//        parent = node.lChild;
+//        node = parent.parent;
+
+//        if(node.parent == root){
+//            node = root;
+//        }
+//
+//
+//        // set rotated node's parent to grandparent
+//        node.parent = parent.parent;
+//        if (node.isLeftChild()) {
+//            node.parent.lChild = node;
+//        } else {
+//            node.parent.rChild = node;
+//        }
+//
+//        // set rotated node's left child as parents right child
+//        parent.rChild = node.lChild;
+//        parent.rChild.parent = parent;
+//
+//        // set rotated nodes left child as its parent
+//        node.lChild = parent;
+//        parent.parent = node;
+
+    }
 
     /**
      * Check the node ensuring that all color cases are covered correctly
@@ -117,86 +217,92 @@ public class RedBlackTree {
      */
     private void fixInsertColor(Node node) {
 
-        // case 2: check if parent is black return if so
-        if (node.isParentBlack()) {
-            return;
-        }
 
-        Node parent = node.parent;
-        Node grandparent = parent.parent;
-        Node uncle;
+        // case 1: if node is root set color to black and return
+        if (node == root) {
+            node.color = Node.BLACK;
 
-        if (parent.isLeftChild()) {
-            uncle = grandparent.rChild;
-        } else {
-            uncle = grandparent.lChild;
-        }
+        } else if (node.parent.color == Node.RED) {
 
-        // case 3:
-        if (parent.color == Node.RED && uncle.color == Node.RED) {
-            parent.color = Node.BLACK;
-            uncle.color = Node.BLACK;
-            grandparent.color = Node.RED;
-            fixInsertColor(grandparent);
-        }
+            Node parent = node.parent;
+            Node grandparent = parent.parent;
+            Node uncle;
 
-        if (parent.color == Node.RED && uncle.color == Node.BLACK) {
-            if (!node.isLeftChild() && parent.isLeftChild()) {
-                rotateTreeRight(parent);
-            } else if (node.isLeftChild() && !parent.isLeftChild()) {
-                rotateTreeLeft(parent);
-            }
-        }
-
-        // case 5:
-        if (parent.color == Node.RED && uncle.color == Node.BLACK) {
-            parent.color = Node.BLACK;
-            grandparent.color = Node.RED;
-
-            if (node.isLeftChild()) {
-                rotateTreeRight(grandparent);
+            if (parent.isLeftChild()) {
+                uncle = grandparent.rChild;
             } else {
-                rotateTreeLeft(grandparent);
+                uncle = grandparent.lChild;
+            }
+
+            // case 3:
+            if (parent.color == Node.RED && uncle.color == Node.RED) {
+                parent.color = Node.BLACK;
+                uncle.color = Node.BLACK;
+                grandparent.color = Node.RED;
+                fixInsertColor(grandparent);
+                return;
+            }
+
+            // case 4:
+            if (parent.color == Node.RED &&( uncle.color == Node.BLACK || uncle == null)) {
+                if (node.isRightChild() && parent.isLeftChild()) {
+                    rotateTree(node, ROTATE_LEFT);
+                    node = node.lChild;
+                } else if (node.isLeftChild() && parent.isRightChild()) {
+                    rotateTree(node, ROTATE_RIGHT);
+                    node = node.rChild;
+                }
+            }
+            parent = node.parent;
+            parent.color = Node.BLACK;
+            grandparent.color = Node.RED;
+
+            if (node.isLeftChild() && parent.isLeftChild()) {
+                rotateTree(parent, ROTATE_RIGHT);
+            } else {
+                rotateTree(parent, ROTATE_LEFT);
             }
         }
-
     }
 
+    /**
+     * Insert an integer recursively to the tree
+     *
+     * @param value {@code int} New element to be inserted
+     */
+    private boolean insertRecursively(Node tree, int value) {
+        // end of a set value and branch pull out
+        // recursively check the left branches then
+        // if not found check the right branches
+        if (tree.value > value) {
+            if (tree.lChild == null) {
+                tree.lChild = new Node(value);
+                tree.lChild.parent = tree;
 
-    private boolean insertRecursively(Node tree, int value, Node parent) {
-        // end of a branch pull out
+                // set the nodes color to red
+                tree.rChild.color = Node.RED;
 
-        if (tree.value == null) {
-            tree.value = value;
+                fixInsertColor(tree.lChild);
+            } else {
+                insertRecursively(tree.lChild, value);
+            }
             return true;
+
         } else {
-            // recursively check the left branches then
-            // if not found check the right branches
-            if (tree.value > value) {
-                if (tree.lChild == null) {
-                    tree.lChild = new Node(value);
-                    tree.lChild.parent = tree;
-                    tree.lChild.color = Node.RED;
-                    fixInsertColor(tree.lChild);
-                } else {
-                    insertRecursively(tree.lChild, value, tree);
-                }
-                return true;
+            if (tree.rChild == null) {
+                tree.rChild = new Node(value);
+                tree.rChild.parent = tree;
 
+                // set the nodes color to red
+                tree.rChild.color = Node.RED;
+                fixInsertColor(tree.rChild);
             } else {
-                if (tree.rChild == null) {
-                    tree.rChild = new Node(value);
-                    tree.rChild.parent = tree;
-                    tree.rChild.color = Node.RED;
-                    fixInsertColor(tree.rChild);
-                } else {
-                    insertRecursively(tree.rChild, value, tree);
-                }
-                return true;
+                insertRecursively(tree.rChild, value);
             }
+            return true;
         }
-    }
 
+    }
 
     /**
      * Insert an integer to the tree
@@ -204,22 +310,51 @@ public class RedBlackTree {
      * @param value {@code int} New element to be inserted
      */
     public void insert(int value) {
-        // if the value already exists return
-        if (checkRecursively(root, value)) {
-            return;
+        Node curNode = root;
+        while(curNode != null && curNode.value != null) {
+            if (value < curNode.value)
+                curNode = curNode.lChild;
+            else if (value > curNode.value)
+                curNode = curNode.rChild;
+            else
+                return;
         }
+            Node node = new Node(value);
+            if (size==0){
+                root=node;
 
-        // add 1 to the size of the tree
-        size = size + 1;
+            } else {
+                Node parent = curNode.parent;
+                node.parent = parent;
+                if(curNode==parent.lChild){
+                    parent.lChild = node;
+                } else {
+                    parent.rChild = node;
+                }
+            }
+            size++;
+            node.color = Node.RED;
+            fixInsertColor(node);
 
-        // initialize root if it hasn't been already
-        if (root == null) {
-            root = new Node(value);
-            root.color = Node.BLACK;
-        } else {
-            insertRecursively(root, value, null);
-        }
+
+
+//        // if the value already exists return
+//        if (checkRecursively(root, value)) {
+//            return;
+//        }
+//
+//        // add 1 to the size of the tree
+//        size++;
+//
+//        // initialize root if it hasn't been already
+//        if (root == null) {
+//            root = new Node(value);
+//            root.color = Node.BLACK;
+//        } else {
+//            insertRecursively(root, value);
+//        }
     }
+
 
     /**
      * Get the size of the tree
@@ -235,55 +370,32 @@ public class RedBlackTree {
      *
      * @return {@code treeString} string format of the tree
      */
-    public String toStringRecursive(Node node, String treeString) {
-        // end of a branch pull out and don't record
-        if (node == null) {
-            return treeString;
-        }
-
-        // add current nodes data to tree string
-        if (node.value == null) {
-            return treeString;
+    public String toStringRecursive(Node node) {
+        // end of a branch or null value pull out and don't record
+        if (node == null || node.value == null) {
+            return "N";
         } else {
-            treeString = treeString + String.format(node.toString());
+            // recursively get the left and right child's strings and return them
+            return String.format(
+                    "%s={%s%s}",
+                    String.format(node.toString()),
+                    toStringRecursive(node.lChild),
+                    toStringRecursive(node.rChild)
+            );
         }
-
-        // recursively get the left and right child's strings and return them
-        return String.format(
-                "%s={%s%s}",
-                treeString,
-                toStringRecursive(node.lChild, ""),
-                toStringRecursive(node.rChild, "")
-        );
     }
 
     /**
      * Cast the tree into a string
+     *
      * @return {@code String} Printed format of the tree
      */
     @Override
     public String toString() {
         // TODO: Lab 2 Part 2-3 -- print the tree, where each node contains both value and color
         // You can print it by in-order traversal
-        return toStringRecursive(root, "");
+        return toStringRecursive(root);
     }
-
-    /**
-     * Main entry
-     *
-     * @param args {@code String[]} Command line arguments
-     */
-    public static void main(String[] args) {
-        RedBlackTree rbt = new RedBlackTree();
-        for (int i = 0; i < 5; i++)
-            rbt.insert((int) (Math.random() * 200));
-
-        assert rbt.root.color == RedBlackTree.Node.BLACK;
-        System.out.println(rbt);
-        System.out.println(rbt.size());
-
-    }
-
 
     /**
      * The {@code Node} class for {@code RedBlackTree}
@@ -342,8 +454,9 @@ public class RedBlackTree {
          */
         @Override
         public String toString() {
-            if (value == null)
+            if (value == null) {
                 return "";
+            }
             return (color == RED) ? "<" + value + ">" : "[" + value + "]";
         }
     }
